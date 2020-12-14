@@ -1,0 +1,249 @@
+<app-header></app-header>
+<div class="col-md-8 col-sm-12 col-xs-12">
+    <div class="x_panel">
+        <div class="bar-loader" *ngIf="loadingHttp"></div>
+        <div>
+            <legend class="headerCard">
+                <div><label>Nueva Tipificación</label>
+                </div>
+            </legend>
+        </div>
+        <form (ngSubmit)="save()" #forma="ngForm">
+
+            <div class="x_content">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label>Campaña Llamada:</label>
+                            <select id="destinationCampaign" class="form-control" [(ngModel)]="disposition.campaignCall" name="campaigncall" (change)="changeCampaignCall($event)">
+                                <option *ngFor="let item of destinationCampaign" [value]="item.idDestinationCampaign">
+                                    {{ item.campaign }} - {{ item.description }} - {{ item.destination }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label>Nombre: *</label>
+                            <input type="text" class="form-control" [(ngModel)]="disposition.name" name="username" required #user="ngModel">
+                            <small *ngIf="user.invalid && user.touched" class="form-text text-danger">Nombre es requerido</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group ">
+                            <label>Apellido Paterno:</label>
+                            <input type="text " class="form-control" [(ngModel)]="disposition.lastName" name="lastname">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group ">
+                            <label>Apellido Materno:</label>
+                            <input type="text " class="form-control" [(ngModel)]="disposition.motherLastName" name="motherLastName">
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label>Teléfono: *</label>
+                            <input type="text" class="form-control cmp-requerido" [(ngModel)]="disposition.telephone" name="telephone" (keypress)="globalMethodsService.numberOnly($event)" onCopy="return false" onDrag="return false" onDrop="return false" onPaste="return false" [required]="isZeus"
+                                #phoneNumber="ngModel" [readonly]="!isZeus">
+                            <small *ngIf="phoneNumber.invalid && phoneNumber.touched" class="form-text text-danger">Teléfono es requerido</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group ">
+                            <label>Teléfono Adicional:</label>
+                            <input type="text " class="form-control cmp-requerido" [(ngModel)]="disposition.additionalPhone" name="additionalPhone" (keypress)="globalMethodsService.numberOnly($event)" onCopy="return false" onDrag="return false" onDrop="return false" onPaste="return false">
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group ">
+                            <label>Idioma: *</label>
+                            <select id="language" class="form-control" [(ngModel)]="disposition.language" required #language="ngModel" name="lang">
+                            <option *ngFor="let item of languages" [value]="item.code">{{ item.name }}</option>
+                        </select>
+                            <small *ngIf="language.value === '' && language.touched" class="form-text text-danger">Idioma es requerido</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label>Pais: *</label>
+                            <select id="country" class="form-control" [(ngModel)]="disposition.country" (change)=changeCountry($event) required #countries="ngModel" name="country">
+                            <option *ngFor="let item of country" [value]="item.code">{{ item.name }}</option>
+                        </select>
+                            <small *ngIf="countries.value === '' && countries.touched" class="form-text text-danger">Pais es requerido</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label>Ciudad: *</label>
+                            <select id="city" class="form-control" [(ngModel)]="disposition.city" name="cities" [disabled]="cityFilter.length === 0" required #cities="ngModel">
+                            <option *ngFor="let item of cityFilter" [value]="item.code">{{ item.name }}</option>
+                        </select>
+                            <small *ngIf="cities.value === '' && cities.touched" class="form-text text-danger">Ciudad es requerido</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group ">
+                            <label>Ruta Origen: *</label>
+                            <select id="originRoute" class="form-control" [(ngModel)]="disposition.originRoute" name="originroutes" required [disabled]="stationsFilter.length === 0" #origin="ngModel">
+                                <option *ngFor="let item of stationsFilter" [value]="item.code">{{ item.name }}</option>
+                        </select>
+                            <small *ngIf="origin.value === '' && origin.touched" class="form-text text-danger">Ruta origen es requerido</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group ">
+                            <label>Ruta Destino: *</label>
+                            <select id="destinationRoute" class="form-control" [(ngModel)]="disposition.destinationRoute" name="destinationroutes" required [disabled]="stationsFilter.length === 0" #destination="ngModel">
+                            <option *ngFor="let item of stationsFilter" [value]="item.code">{{ item.name }}</option>
+                        </select>
+                            <small *ngIf="destination.value === '' && destination.touched" class="form-text text-danger">Ruta destino es requerido</small>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group ">
+                            <label>Forma de Pago:</label>
+                            <select id="payment" class="form-control" [(ngModel)]="disposition.paymentMethod" name="paymentMethod">
+                            <option *ngFor="let item of payment" [value]="item.idWayToPay">{{ item.name }}</option>
+                        </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group ">
+                            <label>Posee PNR: *</label>
+                            <select id="pnr" class="form-control" [(ngModel)]="disposition.hasPnr" name="hasPnr" required #pnr="ngModel">
+                            <option selected value="">Seleccione...</option>
+                            <option  value="S">Si</option>
+                            <option  value="N">No</option>
+                        </select>
+                            <small *ngIf="pnr.value === '' && pnr.touched" class="form-text text-danger">Posee PNR es requerido</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label>Campaña: *</label>
+                            <select id="campaign" class="form-control" [(ngModel)]="disposition.campaign" name="campana" required #campaigns="ngModel" (change)="changeCampaign($event)">
+                            <option *ngFor="let item of campaign" [value]="item.code">{{ item.name }}</option>
+                    </select>
+                            <small *ngIf="campaigns.value === '' && campaigns.touched" class="form-text text-danger">Campaña es requerido</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group ">
+                            <label>Detalle de Campaña: *</label>
+                            <select id="detailCampaign" class="form-control" [(ngModel)]="disposition.detailCampaign" name="detailcampaing" [disabled]="detailCampaignFilter.length === 0" required #detailCampaigns="ngModel">
+                            <option *ngFor="let item of detailCampaignFilter" [value]="item.code">{{ item.name }}</option>
+                    </select>
+                            <small *ngIf="detailCampaigns.value === '' && detailCampaigns.touched" class="form-text text-danger">Detalle Campaña es requerido</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group ">
+                            <label>Franquicia de Tarjeta: *</label>
+                            <select id="franchise" class="form-control" [(ngModel)]="disposition.franchise" name="franchise">
+                            <option *ngFor="let item of franchise" [value]="item.idFranchise">{{ item.description }}</option>
+                    </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label>Monto:</label>
+                            <input type="text" class="form-control cmp-requerido" [(ngModel)]="disposition.amount" name="amount" (keypress)="globalMethodsService.numberOnly($event)">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group ">
+                            <label>Caso:</label>
+                            <input type="text " class="form-control cmp-requerido" [(ngModel)]="disposition.cases" name="cases">
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group ">
+                            <label>Carrier:</label>
+                            <select id="carriers" class="form-control" [(ngModel)]="disposition.carrier" name="carrier">
+                            <option *ngFor="let item of carriers" [value]="item.idCarrier">{{ item.name }}</option>
+                    </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label>Interaction ID:</label>
+                            <input type="text" class="form-control cmp-requerido" [(ngModel)]="disposition.interactionId" name="interactionId" [required]="isZeus" #interaction="ngModel" [readonly]="!isZeus">
+                            <small *ngIf="interaction.invalid && interaction.touched" class="form-text text-danger">Interaction ID es requerido</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group ">
+                            <label>Cliente exento:</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input marginRadio" type="radio" name="inlineRadioOptions" value="DNI" [(ngModel)]="disposition.exemptCustomer">
+                                <label class="form-check-label" for="inlineRadio1">DNI</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input marginRadio" type="radio" name="inlineRadioOptions" value="DNR" [(ngModel)]="disposition.exemptCustomer">
+                                <label class="form-check-label" for="inlineRadio2">DNR</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group ">
+                            <label>Comentarios:</label>
+                            <textarea type="text" class="form-control cmp-requerido" rows="6" [(ngModel)]="disposition.commentary" name="commentary"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group ">
+                            <label>Tipificación:</label>
+                            <select (change)="showChild($event.target,0)" id="nivel0" name="nivel0" class="form-control">
+                                <option value="">Seleccione</option>
+                                <option *ngFor="let op of opcionesParent" value="{{op.idDispositionTree}}">{{op.name}}</option>
+                            </select>
+                            <div class="form-group" [ngStyle]="{'margin-top': (n < 3) ? '' : '-3.4rem' }" *ngFor="let n of niveles">
+                                <label class="" [ngStyle]="{'min-height':(labelNivel[n]!='' && labelNivel[n]!=null) ? '' : '15px' }" *ngIf="labelNivel[n] != ''">{{labelNivel[n]}}</label>
+                                <select (change)="showChild($event.target,n)" id="nivel{{n}}" name="nivel{{n}}" [attr.nivel]="n" class="form-control cmp-requerido" style="margin-top:9px;">
+                                    <option value="">Seleccione</option>
+                                    <option *ngFor="let opcion of opcionesNivel[n]" value="{{opcion.idDispositionTree}}">
+                                        {{opcion.name}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col-md-12 col-sm-12 col-xs-12 ">
+                        <button type="submit" class="btn btn-success btn-round pull-right" [disabled]="!(forma.valid)">
+                    <i class="fa fa-floppy-o " aria-hidden="true "></i> Guardar</button>
+                    </div>
+                </div>
+                <hr>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="col-md-4 col-sm-12 col-xs-12">
+    <app-pnr #pnrComponent [payment]="payment" [phone]="disposition.telephone" (getPNRs)="getData($event)"></app-pnr>
+</div>

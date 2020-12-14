@@ -1,0 +1,26 @@
+/* @import '~@angular/material/prebuilt-themes/deeppurple-amber.css'; */
+
+@import "../node_modules/ngx-toastr/toastr.css";
+@import "./assets/material-theme/my-material-theme.css";
+.cdk-global-overlay-wrapper,
+.cdk-overlay-container {
+    z-index: 99999 !important;
+}
+
+body {
+    background: #f7f7f7;
+}
+
+.x_panel {
+    padding: 10px;
+}
+
+.header {
+    color: #fff!important;
+    background-color: #537E8E!important;
+    content: "";
+    display: table;
+    clear: both;
+    padding: 1px 16px;
+    border-radius: 4px 4px 0 0;
+}
